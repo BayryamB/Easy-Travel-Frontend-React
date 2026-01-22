@@ -1,42 +1,83 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* App Container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--white);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: var(--spacing-xl) 0;
+    background-color: var(--white);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Container utility */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Section spacing */
+.section {
+    padding: var(--spacing-xl) 0;
 }
 
-.card {
-  padding: 2em;
+.section-title {
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
+    color: var(--dark);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
 }
 
-.read-the-docs {
-  color: #888;
+/* Loading state for entire app */
+.app-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--white);
+}
+
+/* Error boundary styling */
+.error-boundary {
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 2px solid var(--danger);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.error-boundary h2 {
+    color: var(--danger);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-container {
+        min-height: 100vh;
+    }
+
+    .main-content {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .section-title {
+        font-size: var(--fs-2xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: var(--spacing-md) 0;
+    }
+
+    .section-title {
+        font-size: var(--fs-xl);
+    }
 }
