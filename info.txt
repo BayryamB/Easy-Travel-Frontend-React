@@ -1,0 +1,117 @@
+Easy-Travel-Frontend-React/
+│
+├── 📄 Root Configuration Files
+│   ├── package.json                 # Dependencies and scripts
+│   ├── vite.config.js               # Vite configuration
+│   ├── tsconfig.json                # TypeScript config (app)
+│   ├── tsconfig.node.json           # TypeScript config (node/vite)
+│   ├── .env                         # Environment variables (LOCAL)
+│   ├── .env.example                 # Environment variables (TEMPLATE)
+│   ├── .gitignore                   # Git ignore rules
+│   └── README.md                    # Project documentation
+│
+├── 📁 public/
+│   ├── index.html                   # Main HTML file
+│   ├── favicon.ico                  # Website icon
+│   └── assets/                      # Public images, fonts, etc.
+│
+├── 📁 src/
+│   │
+│   ├── 📁 components/               # Reusable UI Components
+│   │   │
+│   │   ├── 📁 common/               # Common/Shared Components
+│   │   │   ├── Navbar.jsx           # Navigation bar
+│   │   │   ├── Navbar.css
+│   │   │   ├── Footer.jsx           # Footer component
+│   │   │   ├── Footer.css
+│   │   │   ├── Loading.jsx          # Loading spinner
+│   │   │   ├── Loading.css
+│   │   │   ├── Card.jsx             # Reusable card
+│   │   │   ├── Card.css
+│   │   │   ├── Modal.jsx            # Modal dialog
+│   │   │   └── Modal.css
+│   │   │
+│   │   ├── 📁 auth/                 # Authentication Components
+│   │   │   ├── LoginForm.jsx        # Login form component
+│   │   │   ├── LoginForm.css
+│   │   │   ├── RegisterForm.jsx     # Register form component
+│   │   │   └── RegisterForm.css
+│   │   │
+│   │   ├── 📁 properties/           # Property Components
+│   │   │   ├── PropertyCard.jsx     # Property card display
+│   │   │   ├── PropertyCard.css
+│   │   │   ├── PropertyList.jsx     # List of properties
+│   │   │   ├── PropertyList.css
+│   │   │   ├── PropertyDetail.jsx   # Detailed property view
+│   │   │   ├── PropertyDetail.css
+│   │   │   ├── PropertyFilter.jsx   # Filter/search component
+│   │   │   └── PropertyFilter.css
+│   │   │
+│   │   ├── 📁 bookings/             # Booking Components
+│   │   │   ├── BookingForm.jsx      # Booking form
+│   │   │   ├── BookingForm.css
+│   │   │   ├── BookingCard.jsx      # Booking display
+│   │   │   ├── BookingCard.css
+│   │   │   ├── BookingList.jsx      # List of bookings
+│   │   │   └── BookingList.css
+│   │   │
+│   │   └── 📁 reviews/              # Review Components
+│   │       ├── ReviewCard.jsx       # Single review display
+│   │       ├── ReviewCard.css
+│   │       ├── ReviewForm.jsx       # Write review form
+│   │       ├── ReviewForm.css
+│   │       ├── ReviewList.jsx       # List of reviews
+│   │       └── ReviewList.css
+│   │
+│   ├── 📁 pages/                    # Page Components
+│   │   ├── Home.jsx                 # Home/Landing page
+│   │   ├── Home.css
+│   │   ├── Login.jsx                # Login page
+│   │   ├── Login.css
+│   │   ├── Register.jsx             # Register page
+│   │   ├── Register.css
+│   │   ├── PropertyDetail.jsx       # Property detail page
+│   │   ├── PropertyDetail.css
+│   │   ├── PropertiesList.jsx       # Properties listing page
+│   │   ├── PropertiesList.css
+│   │   ├── Bookings.jsx             # My bookings page
+│   │   ├── Bookings.css
+│   │   ├── Profile.jsx              # User profile page
+│   │   ├── Profile.css
+│   │   ├── Wishlist.jsx             # Wishlist/Favorites page
+│   │   ├── Wishlist.css
+│   │   ├── NotFound.jsx             # 404 page
+│   │   └── NotFound.css
+│   │
+│   ├── 📁 services/                 # API Service Files (TypeScript)
+│   │   ├── api.ts                   # Axios instance & interceptors
+│   │   ├── authService.ts           # Auth API calls
+│   │   ├── propertyService.ts       # Property API calls
+│   │   ├── bookingService.ts        # Booking API calls
+│   │   ├── reviewService.ts         # Review API calls
+│   │   └── userService.ts           # User API calls (optional)
+│   │
+│   ├── 📁 utils/                    # Utility Files (TypeScript)
+│   │   ├── constants.ts             # Constants & enums
+│   │   ├── helpers.ts               # Helper functions
+│   │   └── validators.ts            # Form validators
+│   │
+│   ├── 📁 styles/                   # Global CSS Files
+│   │   ├── global.css               # Global styles & utilities
+│   │   ├── variables.css            # CSS variables & design tokens
+│   │   └── reset.css                # CSS reset
+│   │
+│   ├── 📁 hooks/                    # Custom React Hooks (optional)
+│   │   ├── useAuth.ts               # Auth hook
+│   │   ├── useProperties.ts         # Properties hook
+│   │   └── useBookings.ts           # Bookings hook
+│   │
+│   ├── App.jsx                      # Main App component
+│   ├── App.css                      # App styles
+│   ├── main.jsx                     # Entry point
+│   └── index.css                    # Main CSS
+│
+└── 📄 Documentation
+    ├── FRONTEND_SETUP_GUIDE.md      # Setup instructions
+    ├── ARCHITECTURE.md              # Architecture documentation
+    └── COMPONENTS.md                # Component documentation
