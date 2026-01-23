@@ -4,6 +4,7 @@
     flex-direction: column;
     min-height: 100vh;
     background-color: var(--white);
+    min-width: 1400px;
 }
 
 /* Main Content */
@@ -15,7 +16,7 @@
 
 /* Container utility */
 .container {
-    max-width: 1200px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
 }

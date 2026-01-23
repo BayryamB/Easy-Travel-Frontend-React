@@ -31,7 +31,8 @@ const Navbar = () => {
             <div className="navbar-container">
                 {/* Logo */}
                 <Link to="/" className="navbar-logo">
-                    <span className="logo-text">✈️ Easy Travel</span>
+                    <span className="logo-icon">🏠</span>
+                    <span className="logo-text">Easy Travel</span>
                 </Link>
 
                 {/* Menu Toggle Button (Mobile) */}
@@ -49,38 +50,26 @@ const Navbar = () => {
                 <div className={`navbar-menu ${isMenuOpen ? "active" : ""}`}>
                     <div className="navbar-links">
                         <Link
-                            to="/"
-                            className={`nav-link ${isActive("/")}`}
-                            onClick={handleNavClick}
-                        >
-                            Home
-                        </Link>
-                        <Link
                             to="/properties"
                             className={`nav-link ${isActive("/properties")}`}
                             onClick={handleNavClick}
                         >
-                            Browse
+                            Explore
                         </Link>
-
-                        {isAuthenticated && (
-                            <>
-                                <Link
-                                    to="/bookings"
-                                    className={`nav-link ${isActive("/bookings")}`}
-                                    onClick={handleNavClick}
-                                >
-                                    My Bookings
-                                </Link>
-                                <Link
-                                    to="/wishlist"
-                                    className={`nav-link ${isActive("/wishlist")}`}
-                                    onClick={handleNavClick}
-                                >
-                                    Wishlist
-                                </Link>
-                            </>
-                        )}
+                        <a
+                            href="#"
+                            className="nav-link"
+                            onClick={handleNavClick}
+                        >
+                            Become a Host
+                        </a>
+                        <a
+                            href="#"
+                            className="nav-link"
+                            onClick={handleNavClick}
+                        >
+                            Help
+                        </a>
                     </div>
 
                     {/* Auth Section */}
@@ -111,13 +100,34 @@ const Navbar = () => {
                                                 handleNavClick();
                                             }}
                                         >
-                                            👤 Profile
+                                            👤 My Profile
                                         </Link>
+                                        <Link
+                                            to="/bookings"
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                setIsProfileOpen(false);
+                                                handleNavClick();
+                                            }}
+                                        >
+                                            📅 My Bookings
+                                        </Link>
+                                        <Link
+                                            to="/wishlist"
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                setIsProfileOpen(false);
+                                                handleNavClick();
+                                            }}
+                                        >
+                                            ❤️ Wishlist
+                                        </Link>
+                                        <hr className="dropdown-divider" />
                                         <button
                                             className="dropdown-item logout-btn"
                                             onClick={handleLogout}
                                         >
-                                            🚪 Logout
+                                            🚪 Log Out
                                         </button>
                                     </div>
                                 )}
@@ -126,17 +136,17 @@ const Navbar = () => {
                             <>
                                 <Link
                                     to="/login"
-                                    className="btn btn-outline"
+                                    className="auth-link login-link"
                                     onClick={handleNavClick}
                                 >
-                                    Login
+                                    Log in
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary btn-small"
                                     onClick={handleNavClick}
                                 >
-                                    Sign Up
+                                    Sign up
                                 </Link>
                             </>
                         )}
