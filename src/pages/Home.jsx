@@ -87,7 +87,7 @@ const Home = () => {
                         <div className="search-field">
                             <label>GUESTS</label>
                             <input
-                                type="text"
+                                type="number"
                                 placeholder="Add guests"
                                 className="search-input"
                                 value={searchData.guests}
