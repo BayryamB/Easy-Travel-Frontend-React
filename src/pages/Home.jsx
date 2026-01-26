@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { propertyService } from "../services/propertyService";
 import "./Home.css";
 
@@ -11,7 +13,8 @@ const Home = () => {
     const [activeTab, setActiveTab] = useState("all");
     const [searchData, setSearchData] = useState({
         location: "",
-        dates: "",
+        checkIn: null,
+        checkOut: null,
         guests: "",
     });
 
@@ -37,7 +40,17 @@ const Home = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
+        console.log("Searching with:", searchData);
         // Handle search logic here
+    };
+
+    const handleDateRangeChange = (dates) => {
+        const [start, end] = dates;
+        setSearchData((prev) => ({
+            ...prev,
+            checkIn: start,
+            checkOut: end,
+        }));
     };
 
     return (
@@ -69,26 +82,25 @@ const Home = () => {
                                 }
                             />
                         </div>
+
                         <div className="search-field">
                             <label>DATES</label>
-                            <input
-                                type="text"
-                                placeholder="Add dates"
-                                className="search-input"
-                                value={searchData.dates}
-                                onChange={(e) =>
-                                    setSearchData({
-                                        ...searchData,
-                                        dates: e.target.value,
-                                    })
-                                }
+                            <DatePicker
+                                selectsRange={true}
+                                startDate={searchData.checkIn}
+                                endDate={searchData.checkOut}
+                                onChange={handleDateRangeChange}
+                                placeholderText="Add dates"
+                                className="search-input date-picker-input"
+                                dateFormat="MMM d"
+                                minDate={new Date()}
+                                isClearable={true}
                             />
                         </div>
+
                         <div className="search-field">
                             <label>GUESTS</label>
-                            <input
-                                type="number"
-                                placeholder="Add guests"
+                            <select
                                 className="search-input"
                                 value={searchData.guests}
                                 onChange={(e) =>
@@ -97,8 +109,18 @@ const Home = () => {
                                         guests: e.target.value,
                                     })
                                 }
-                            />
+                            >
+                                <option value="">Add guests</option>
+                                <option value="1">1 guest</option>
+                                <option value="2">2 guests</option>
+                                <option value="3">3 guests</option>
+                                <option value="4">4 guests</option>
+                                <option value="5">5 guests</option>
+                                <option value="6">6 guests</option>
+                                <option value="7+">7+ guests</option>
+                            </select>
                         </div>
+
                         <button
                             type="submit"
                             className="btn btn-primary search-btn"
@@ -173,7 +195,10 @@ const Home = () => {
                                                 }
                                                 alt={property.title}
                                             />
-                                            <button className="like-btn">
+                                            <button
+                                                className="like-btn"
+                                                type="button"
+                                            >
                                                 ♡
                                             </button>
                                             <span className="property-badge">
@@ -246,7 +271,10 @@ const Home = () => {
                                                 }
                                                 alt={property.title}
                                             />
-                                            <button className="like-btn">
+                                            <button
+                                                className="like-btn"
+                                                type="button"
+                                            >
                                                 ♡
                                             </button>
                                             <span className="property-badge">
