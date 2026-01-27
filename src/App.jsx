@@ -10,6 +10,7 @@ import Footer from "./components/common/Footer";
 
 // Pages
 import Home from "./pages/Home";
+import BecomeHost from "./pages/BecomeHost";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PropertiesList from "./pages/PropertiesList";
@@ -39,6 +40,7 @@ function App() {
                     <Routes>
                         {/* Public Routes */}
                         <Route path="/" element={<Home />} />
+                        <Route path="/become-host" element={<BecomeHost />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route

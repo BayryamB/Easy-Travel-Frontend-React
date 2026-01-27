@@ -1,138 +1,298 @@
-import api from "./api";
+// propertyService.ts - Fixed TypeScript Error Handling
 
-export interface Property {
-    _id: string;
-    hostId: string;
-    title: string;
-    location: {
-        country: string;
-        city: string;
-        address?: string;
-    };
-    bedroomCount: number;
-    bathroomCount: number;
-    maxGuests: number;
-    propertyType: string;
-    price: number;
-    pricePerNight?: number;
-    rating?: number;
-    cover?: string;
-    photos?: string[];
-    description?: string;
-    likes?: string[];
-    createdAt?: string;
-}
+import api from "./api";
+import axios from "axios";
 
 export const propertyService = {
-    // Get all short-term stays
-    getNormalStays: async (): Promise<Property[]> => {
+    // ===== NORMAL STAYS (Short-term) =====
+
+    // Get all short-term properties
+    getNormalStays: async () => {
         try {
-            const response = await api.get<Property[]>("/normal-stays");
+            const response = await api.get("/normal-stays");
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Get recent short-term stays
-    getRecentNormalStays: async (): Promise<Property[]> => {
+    // Get recent short-term properties
+    getRecentNormalStays: async () => {
         try {
-            const response = await api.get<Property[]>("/normal-stays/recent");
+            const response = await api.get("/normal-stays/recent");
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Get single short-term stay
-    getNormalStay: async (id: string): Promise<Property> => {
+    // Get single short-term property
+    getNormalStayById: async (id: string) => {
         try {
-            const response = await api.get<Property>(`/normal-stays/${id}`);
+            const response = await api.get(`/normal-stays/${id}`);
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Get all long-term stays
-    getLongTermStays: async (): Promise<Property[]> => {
+    // Create new short-term property
+    createNormalStay: async (propertyData: any) => {
         try {
-            const response = await api.get<Property[]>("/long-term-stays");
+            const response = await api.post("/normal-stays", propertyData);
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Get recent long-term stays
-    getRecentLongTermStays: async (): Promise<Property[]> => {
+    // Update short-term property
+    updateNormalStay: async (id: string, propertyData: any) => {
         try {
-            const response = await api.get<Property[]>(
-                "/long-term-stays/recent",
+            const response = await api.put(`/normal-stays/${id}`, propertyData);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Delete short-term property
+    deleteNormalStay: async (id: string) => {
+        try {
+            await api.delete(`/normal-stays/${id}`);
+            return true;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Like short-term property
+    likeNormalStay: async (id: string, userId: string) => {
+        try {
+            const response = await api.post(`/normal-stays/like/${id}`, {
+                userId,
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Unlike short-term property
+    unlikeNormalStay: async (id: string, userId: string) => {
+        try {
+            const response = await api.post(`/normal-stays/unlike/${id}`, {
+                userId,
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // ===== LONG-TERM STAYS =====
+
+    // Get all long-term properties
+    getLongTermStays: async () => {
+        try {
+            const response = await api.get("/long-term-stays");
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Get recent long-term properties
+    getRecentLongTermStays: async () => {
+        try {
+            const response = await api.get("/long-term-stays/recent");
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Get single long-term property
+    getLongTermStayById: async (id: string) => {
+        try {
+            const response = await api.get(`/long-term-stays/${id}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Create new long-term property
+    createLongTermStay: async (propertyData: any) => {
+        try {
+            const response = await api.post("/long-term-stays", propertyData);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Update long-term property
+    updateLongTermStay: async (id: string, propertyData: any) => {
+        try {
+            const response = await api.put(
+                `/long-term-stays/${id}`,
+                propertyData,
             );
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Get single long-term stay
-    getLongTermStay: async (id: string): Promise<Property> => {
+    // Delete long-term property
+    deleteLongTermStay: async (id: string) => {
         try {
-            const response = await api.get<Property>(`/long-term-stays/${id}`);
-            return response.data;
+            await api.delete(`/long-term-stays/${id}`);
+            return true;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
+
+    // Like long-term property
+    likeLongTermStay: async (id: string, userId: string) => {
+        try {
+            const response = await api.post(`/long-term-stays/like/${id}`, {
+                userId,
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Unlike long-term property
+    unlikeLongTermStay: async (id: string, userId: string) => {
+        try {
+            const response = await api.post(`/long-term-stays/unlike/${id}`, {
+                userId,
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // ===== DESTINATIONS =====
 
     // Get all destinations
-    getDestinations: async (): Promise<Property[]> => {
+    getDestinations: async () => {
         try {
-            const response = await api.get<Property[]>("/destinations");
+            const response = await api.get("/destinations");
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
     // Get single destination
-    getDestination: async (id: string): Promise<Property> => {
+    getDestinationById: async (id: string) => {
         try {
-            const response = await api.get<Property>(`/destinations/${id}`);
+            const response = await api.get(`/destinations/${id}`);
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Like a property
-    likeProperty: async (
-        propertyId: string,
-        type: "normal" | "long",
-    ): Promise<void> => {
+    // Create new destination
+    createDestination: async (destinationData: any) => {
         try {
-            const endpoint =
-                type === "normal" ? "/normal-stays" : "/long-term-stays";
-            await api.post(`${endpoint}/${propertyId}/like`, {
-                userId: localStorage.getItem("userId"),
-            });
+            const response = await api.post("/destinations", destinationData);
+            return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },
 
-    // Unlike a property
-    unlikeProperty: async (
-        propertyId: string,
-        userId: string,
-        type: "normal" | "long",
-    ): Promise<void> => {
+    // Update destination
+    updateDestination: async (id: string, destinationData: any) => {
         try {
-            const endpoint =
-                type === "normal" ? "/normal-stays" : "/long-term-stays";
-            await api.delete(`${endpoint}/${propertyId}/unlike/${userId}`);
+            const response = await api.put(
+                `/destinations/${id}`,
+                destinationData,
+            );
+            return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
+            throw error;
+        }
+    },
+
+    // Delete destination
+    deleteDestination: async (id: string) => {
+        try {
+            await api.delete(`/destinations/${id}`);
+            return true;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw error.response?.data || error.message;
+            }
             throw error;
         }
     },

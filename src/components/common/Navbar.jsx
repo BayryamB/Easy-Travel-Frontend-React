@@ -56,7 +56,7 @@ const Navbar = () => {
                             Explore
                         </Link>
                         <a
-                            href="#"
+                            href="/become-host"
                             className="nav-link"
                             onClick={handleNavClick}
                         >
