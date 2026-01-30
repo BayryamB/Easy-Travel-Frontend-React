@@ -18,6 +18,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import Bookings from "./pages/Bookings";
 import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
+import PropertyDetails from "./pages/PropertyDetails";
 import NotFound from "./pages/NotFound";
 
 import "./App.css";
@@ -49,7 +50,7 @@ function App() {
                         />
                         <Route
                             path="/property/:id"
-                            element={<PropertyDetail />}
+                            element={<PropertyDetails />}
                         />
 
                         {/* Protected Routes */}

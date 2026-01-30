@@ -6,10 +6,12 @@ import "./BecomeHost.css";
 const BecomeHost = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1); // 1: Select type, 2: Fill form
-    const [propertyType, setPropertyType] = useState(null); // 'short' or 'long'
+    const [stayDuration, setStayDuration] = useState(null); // 'short' or 'long'
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const BACKEND_URL = import.meta.env.VITE_API_URL;
 
     const [formData, setFormData] = useState({
         title: "",
@@ -17,6 +19,10 @@ const BecomeHost = () => {
         country: "",
         city: "",
         price: "",
+        bedroomCount: "",
+        bathroomCount: "",
+        maxGuests: "",
+        propertyType: "",
         photos: [],
         cover: "",
         wifi: false,
@@ -27,12 +33,13 @@ const BecomeHost = () => {
         guide: "",
     });
 
-    const handlePropertyTypeSelect = (type) => {
-        setPropertyType(type);
+    const handleStayDurationSelect = (type) => {
+        setStayDuration(type);
         setStep(2);
         setError("");
     };
 
+    // Fixed: Proper event typing
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -51,15 +58,93 @@ const BecomeHost = () => {
         if (error) setError("");
     };
 
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        const fileUrls = files.map((file) => URL.createObjectURL(file));
+    const handleFileInputClick = () => {
+        const fileInput = document.getElementById("photo-upload-input");
+        if (fileInput) {
+            fileInput.click();
+        }
+    };
 
-        setFormData((prev) => ({
-            ...prev,
-            photos: [...prev.photos, ...fileUrls],
-            cover: prev.cover || fileUrls[0],
-        }));
+    // FIXED: Proper TypeScript typing for file upload
+    const handleFileChange = async (e) => {
+        const target = e.target;
+        const files = target.files ? Array.from(target.files) : [];
+
+        if (files.length === 0) return;
+
+        setUploading(true);
+        setError("");
+
+        try {
+            const uploadedUrls = [];
+
+            for (const file of files) {
+                const url = await uploadPhotoToBackend(file);
+                uploadedUrls.push(url);
+            }
+
+            setFormData((prev) => ({
+                ...prev,
+                photos: [...prev.photos, ...uploadedUrls],
+                cover: prev.cover || uploadedUrls[0],
+            }));
+
+            setSuccess(
+                `${uploadedUrls.length} photo(s) uploaded successfully!`,
+            );
+        } catch (err) {
+            const errorMessage =
+                err instanceof Error ? err.message : "Unknown error";
+            setError("Failed to upload photos: " + errorMessage);
+            console.error(err);
+        } finally {
+            setUploading(false);
+            target.value = "";
+        }
+    };
+
+    // Upload photo to backend
+    const uploadPhotoToBackend = async (file) => {
+        const formDataForUpload = new FormData();
+        formDataForUpload.append("photo", file);
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/upload`, {
+                method: "POST",
+                body: formDataForUpload,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Upload failed");
+            }
+
+            const data = await response.json();
+
+            return data.data.url;
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error ? error.message : "Unknown error";
+            throw new Error(`Failed to upload ${file.name}: ${errorMessage}`);
+        }
+    };
+
+    const removePhoto = (index) => {
+        setFormData((prev) => {
+            const newPhotos = prev.photos.filter((_, i) => i !== index);
+            const newCover =
+                prev.cover === prev.photos[index]
+                    ? newPhotos.length > 0
+                        ? newPhotos[0]
+                        : ""
+                    : prev.cover;
+
+            return {
+                ...prev,
+                photos: newPhotos,
+                cover: newCover,
+            };
+        });
     };
 
     const validateForm = () => {
@@ -83,6 +168,22 @@ const BecomeHost = () => {
             setError("Please enter a valid price");
             return false;
         }
+        if (!formData.bedroomCount || formData.bedroomCount < 1) {
+            setError("Please enter number of bedrooms");
+            return false;
+        }
+        if (!formData.bathroomCount || formData.bathroomCount < 1) {
+            setError("Please enter number of bathrooms");
+            return false;
+        }
+        if (!formData.maxGuests || formData.maxGuests < 1) {
+            setError("Please enter maximum guests");
+            return false;
+        }
+        if (!formData.propertyType) {
+            setError("Please select a property type");
+            return false;
+        }
 
         return true;
     };
@@ -99,7 +200,15 @@ const BecomeHost = () => {
         setSuccess("");
 
         try {
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                setError("Please log in to list a property");
+                setLoading(false);
+                return;
+            }
             const propertyData = {
+                hostId: userId,
+                propertyType: formData.propertyType,
                 title: formData.title,
                 description: formData.description,
                 location: {
@@ -107,6 +216,9 @@ const BecomeHost = () => {
                     city: formData.city,
                 },
                 price: parseFloat(formData.price),
+                bedroomCount: parseInt(formData.bedroomCount),
+                bathroomCount: parseInt(formData.bathroomCount),
+                maxGuests: parseInt(formData.maxGuests),
                 photos: formData.photos,
                 cover: formData.cover || "https://via.placeholder.com/500x300",
                 guide: formData.guide,
@@ -119,7 +231,7 @@ const BecomeHost = () => {
                 },
             };
 
-            if (propertyType === "short") {
+            if (stayDuration === "short") {
                 await propertyService.createNormalStay(propertyData);
             } else {
                 await propertyService.createLongTermStay(propertyData);
@@ -131,10 +243,9 @@ const BecomeHost = () => {
                 navigate("/");
             }, 2000);
         } catch (err) {
-            setError(
-                err.response?.data?.error ||
-                    "Failed to list property. Please try again.",
-            );
+            const errorMessage =
+                err instanceof Error ? err.message : "Failed to list property";
+            setError(errorMessage);
             console.error(err);
         } finally {
             setLoading(false);
@@ -153,11 +264,10 @@ const BecomeHost = () => {
                         </div>
 
                         <div className="property-type-cards">
-                            {/* Short-term Card */}
                             <div
                                 className="property-card-option"
                                 onClick={() =>
-                                    handlePropertyTypeSelect("short")
+                                    handleStayDurationSelect("short")
                                 }
                             >
                                 <div className="card-icon">🏖️</div>
@@ -176,10 +286,9 @@ const BecomeHost = () => {
                                 </button>
                             </div>
 
-                            {/* Long-term Card */}
                             <div
                                 className="property-card-option"
-                                onClick={() => handlePropertyTypeSelect("long")}
+                                onClick={() => handleStayDurationSelect("long")}
                             >
                                 <div className="card-icon">🏠</div>
                                 <h3>Long-term Stays</h3>
@@ -215,7 +324,7 @@ const BecomeHost = () => {
                         <div className="host-form-header">
                             <h1>
                                 List Your{" "}
-                                {propertyType === "short"
+                                {stayDuration === "short"
                                     ? "Short-term"
                                     : "Long-term"}{" "}
                                 Property
@@ -298,7 +407,7 @@ const BecomeHost = () => {
                                 <div className="form-group">
                                     <label className="form-label">
                                         Price per{" "}
-                                        {propertyType === "short"
+                                        {stayDuration === "short"
                                             ? "Night"
                                             : "Month"}{" "}
                                         *
@@ -315,7 +424,89 @@ const BecomeHost = () => {
                                     />
                                 </div>
                             </div>
+                            {/* Property Details */}
+                            <div className="form-section">
+                                <h2>Property Details</h2>
 
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Bedrooms *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="bedroomCount"
+                                            value={formData.bedroomCount}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            placeholder="e.g., 2"
+                                            min="1"
+                                            disabled={loading}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Bathrooms *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="bathroomCount"
+                                            value={formData.bathroomCount}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            placeholder="e.g., 1"
+                                            min="1"
+                                            disabled={loading}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Max Guests *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="maxGuests"
+                                            value={formData.maxGuests}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            placeholder="e.g., 4"
+                                            min="1"
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Property Type Selection */}
+                            <div className="form-section">
+                                <h2>Property Type</h2>
+
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        What type of property is this? *
+                                    </label>
+                                    <select
+                                        name="propertyType"
+                                        value={formData.propertyType}
+                                        onChange={handleChange}
+                                        className="form-control"
+                                        disabled={loading}
+                                    >
+                                        <option value="">
+                                            Select property type
+                                        </option>
+                                        <option value="apartment">
+                                            Apartment
+                                        </option>
+                                        <option value="house">House</option>
+                                        <option value="villa">Villa</option>
+                                        <option value="condo">Condo</option>
+                                        <option value="room">Room</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
                             {/* Amenities */}
                             <div className="form-section">
                                 <h2>Amenities</h2>
@@ -385,23 +576,33 @@ const BecomeHost = () => {
                             <div className="form-section">
                                 <h2>Photos</h2>
                                 <p className="section-desc">
-                                    Upload photos of your property (Optional)
+                                    Upload photos of your property
                                 </p>
 
-                                <div className="file-upload">
+                                <div
+                                    className="file-upload"
+                                    onClick={handleFileInputClick}
+                                >
                                     <input
+                                        id="photo-upload-input"
                                         type="file"
                                         multiple
                                         accept="image/*"
                                         onChange={handleFileChange}
                                         className="file-input"
-                                        disabled={loading}
+                                        disabled={loading || uploading}
                                     />
                                     <div className="upload-hint">
-                                        <span>📸 Click to upload photos</span>
+                                        <span>
+                                            📸{" "}
+                                            {uploading
+                                                ? "Uploading..."
+                                                : "Click to upload photos"}
+                                        </span>
                                     </div>
                                 </div>
 
+                                {/* Photo Preview */}
                                 {formData.photos.length > 0 && (
                                     <div className="photo-preview">
                                         <h3>
@@ -414,16 +615,50 @@ const BecomeHost = () => {
                                                     <div
                                                         key={index}
                                                         className="photo-item"
+                                                        style={{
+                                                            position:
+                                                                "relative",
+                                                        }}
                                                     >
                                                         <img
                                                             src={photo}
                                                             alt={`Photo ${index + 1}`}
+                                                            style={{
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                objectFit:
+                                                                    "cover",
+                                                            }}
                                                         />
-                                                        <span className="photo-badge">
-                                                            {index === 0
-                                                                ? "Cover"
-                                                                : `Photo ${index + 1}`}
-                                                        </span>
+                                                        <div
+                                                            className="photo-actions"
+                                                            style={{
+                                                                display: "flex",
+                                                            }}
+                                                        >
+                                                            <span className="photo-badge">
+                                                                {index === 0
+                                                                    ? "Cover"
+                                                                    : `Photo ${index + 1}`}
+                                                            </span>
+                                                            <button
+                                                                type="button"
+                                                                className="photo-delete"
+                                                                onClick={(
+                                                                    e,
+                                                                ) => {
+                                                                    e.preventDefault();
+                                                                    removePhoto(
+                                                                        index,
+                                                                    );
+                                                                }}
+                                                                style={{
+                                                                    cursor: "pointer",
+                                                                }}
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 ),
                                             )}
@@ -457,7 +692,7 @@ const BecomeHost = () => {
                                 <button
                                     type="submit"
                                     className="btn btn-primary btn-lg"
-                                    disabled={loading}
+                                    disabled={loading || uploading}
                                 >
                                     {loading
                                         ? "Publishing Property..."
