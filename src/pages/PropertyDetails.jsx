@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./PropertyDetails.css";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import BookingSection from "../components/Bookingsection";
+import BookingModal from "../components/BookingSection/BookingModal";
 
 const PropertyDetails = () => {
     const { id } = useParams();
@@ -332,7 +331,7 @@ const PropertyDetails = () => {
 
                     {/* Right Column */}
                     <div className="right-column">
-                        <BookingSection property={property} />
+                        <BookingModal property={property} />
                     </div>
                     {/* Host Card */}
                     {host && (
