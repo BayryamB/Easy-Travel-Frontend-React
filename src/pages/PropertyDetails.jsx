@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import "./PropertyDetails.css";
 import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
-
+import { authService } from "../services/authService";
 const PropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ const PropertyDetails = () => {
     const [error, setError] = useState("");
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
     const [showMoreDescription, setShowMoreDescription] = useState(false);
-
+    const [isOwner, setIsOwner] = useState(false);
     const BACKEND_URL =
         import.meta.env.VITE_API_URL ||
         "https://easy-travel-backend-nodejs.onrender.com/api";
@@ -42,10 +42,15 @@ const PropertyDetails = () => {
 
                 const propertyData = await propertyResponse.json();
                 const actualProperty = propertyData.data || propertyData;
+                const propertyOwner =
+                    actualProperty.hostId._id === authService.getUserId();
 
-                console.log("Property Data:", actualProperty); // Debug log
-                console.log("HostId:", actualProperty.hostId); // Debug log
+                //console.log("Property Data:", actualProperty); // Debug log
+                // console.log(authService.getUserId());
+                // console.log("HostId:", actualProperty.hostId._id); // Debug log
+                // console.log(propertyOwner);
 
+                setIsOwner(propertyOwner);
                 setProperty(actualProperty);
 
                 // Fetch host information - handle both string ID and object
@@ -328,10 +333,21 @@ const PropertyDetails = () => {
                             </div>
                         )}
                     </div>
-
                     {/* Right Column */}
+
                     <div className="right-column">
-                        <BookingModal property={property} />
+                        {isOwner ? (
+                            <div className="edit-button-container">
+                                <Link
+                                    to={`/edit-listing/${property._id}`}
+                                    className="btn btn-primary"
+                                >
+                                    Edit Property
+                                </Link>
+                            </div>
+                        ) : (
+                            <BookingModal property={property} />
+                        )}
                     </div>
                     {/* Host Card */}
                     {host && (

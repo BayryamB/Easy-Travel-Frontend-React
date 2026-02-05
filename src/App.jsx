@@ -20,6 +20,7 @@ import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
 import PropertyDetails from "./pages/PropertyDetails";
 import NotFound from "./pages/NotFound";
+import EditListing from "./pages/EditListing";
 
 import "./App.css";
 
@@ -69,6 +70,10 @@ function App() {
                                     <Profile />
                                 </ProtectedRoute>
                             }
+                        />
+                        <Route
+                            path="/edit-listing/:id"
+                            element={<EditListing />}
                         />
                         <Route
                             path="/wishlist"
