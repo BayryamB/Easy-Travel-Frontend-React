@@ -1,0 +1,99 @@
+.like-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-size: 20px;
+}
+
+/* Small size */
+.like-button-small {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+}
+
+/* Medium size */
+.like-button-medium {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+}
+
+/* Large size */
+.like-button-large {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+}
+
+/* Hover state */
+.like-button:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 0.1);
+    transform: scale(1.1);
+}
+
+/* Liked state */
+.like-button.liked {
+    color: #ff6b6b;
+}
+
+.like-button.liked:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+/* Disabled state */
+.like-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Heart icon */
+.heart-icon {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.like-button:hover:not(:disabled) .heart-icon {
+    transform: scale(1.2);
+}
+
+/* Like count badge */
+.like-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ff6b6b;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* When used in cards */
+.property-card .like-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.property-card .like-button:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 0.1);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .like-button-medium {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+}

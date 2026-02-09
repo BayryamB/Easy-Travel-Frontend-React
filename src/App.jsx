@@ -21,6 +21,7 @@ import Wishlist from "./pages/Wishlist";
 import PropertyDetails from "./pages/PropertyDetails";
 import NotFound from "./pages/NotFound";
 import EditListing from "./pages/EditListing";
+import LikeButton from "./components/LikeButton";
 
 import "./App.css";
 

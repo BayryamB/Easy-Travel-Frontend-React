@@ -154,7 +154,7 @@ const PropertyDetails = () => {
                 <span>/</span>
                 <button onClick={() => navigate("/")}>Stays</button>
                 <span>/</span>
-                <span>{property.location?.country}</span>
+                <span>{property.location}</span>
             </div>
 
             {/* Header */}
@@ -165,10 +165,7 @@ const PropertyDetails = () => {
                         <span className="rating">
                             ⭐ {avgRating} ({reviews.length} reviews)
                         </span>
-                        <span className="location">
-                            📍 {property.location?.city},{" "}
-                            {property.location?.country}
-                        </span>
+                        <span className="location">📍 {property.location}</span>
                     </div>
                 </div>
                 <div className="header-actions">

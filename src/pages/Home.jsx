@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { propertyService } from "../services/propertyService";
 import "./Home.css";
-
+import LikeButton from "../components/LIkebutton";
 const Home = () => {
     const [shortTermStays, setShortTermStays] = useState([]);
     const [longTermStays, setLongTermStays] = useState([]);
@@ -195,15 +195,18 @@ const Home = () => {
                                                 }
                                                 alt={property.title}
                                             />
-                                            <button
-                                                className="like-btn"
-                                                type="button"
-                                            >
-                                                ♡
-                                            </button>
+                                            <LikeButton
+                                                propertyId={property._id}
+                                            />
                                             <span className="property-badge">
                                                 Book now
                                             </span>
+                                            <div className="property-price">
+                                                <strong>
+                                                    ${property.price}
+                                                </strong>
+                                                <span>/night</span>
+                                            </div>
                                         </div>
                                         <div className="property-info">
                                             <div className="property-header">
@@ -219,8 +222,7 @@ const Home = () => {
                                                 </div>
                                             </div>
                                             <p className="property-location">
-                                                {property.location?.city},{" "}
-                                                {property.location?.country}
+                                                {property.location}
                                             </p>
                                             <p className="property-description">
                                                 {property.description?.substring(
@@ -229,12 +231,6 @@ const Home = () => {
                                                 )}
                                                 ...
                                             </p>
-                                            <div className="property-price">
-                                                <strong>
-                                                    ${property.price}
-                                                </strong>
-                                                <span>/night</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </Link>
