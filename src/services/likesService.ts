@@ -15,10 +15,6 @@ interface LikeCheckResponse {
     isLiked: boolean;
 }
 
-interface UserLikesResponse {
-    likes: string[];
-}
-
 interface LikedProperty {
     _id: string;
     title: string;
@@ -65,7 +61,7 @@ class LikesService {
      */
     async addLike(userId: string, propertyId: string): Promise<string[]> {
         try {
-            const response = await fetch(`${API_URL}/users/like/${userId}`, {
+            const response = await fetch(`${API_URL}/users/${userId}/likes`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -98,13 +94,15 @@ class LikesService {
      */
     async removeLike(userId: string, propertyId: string): Promise<string[]> {
         try {
-            const response = await fetch(`${API_URL}/users/unlike/${userId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `${API_URL}/users/${userId}/likes/${propertyId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                 },
-                body: JSON.stringify({ propertyId }),
-            });
+            );
 
             if (!response.ok) {
                 const error = await response.json();
@@ -153,16 +151,21 @@ class LikesService {
         propertyId: string,
     ): Promise<boolean> {
         try {
-            const response = await fetch(
-                `${API_URL}/users/${userId}/is-liked/${propertyId}`,
-            );
+            const response = await fetch(`${API_URL}/users/${userId}/likes`);
+
+            const userLikes = (await response.json()) as string[];
+            if (!userLikes) {
+                return false;
+            }
+            console.log("User likes", userLikes);
+
+            const isLiked: boolean = userLikes?.includes(propertyId) ?? false;
 
             if (!response.ok) {
                 return false;
             }
-
-            const data = (await response.json()) as LikeCheckResponse;
-            return data.isLiked || false;
+            console.log("isLiked:", isLiked);
+            return isLiked;
         } catch (error) {
             console.error("Error checking like status:", error);
             return false;
@@ -185,8 +188,8 @@ class LikesService {
                 } as ServiceError;
             }
 
-            const data = (await response.json()) as UserLikesResponse;
-            return data.likes || [];
+            const data = (await response.json()) as string[];
+            return data || [];
         } catch (error) {
             console.error("Error fetching user likes:", error);
             return [];
@@ -305,7 +308,6 @@ export const likesService = new LikesService();
 export type {
     LikeResponse,
     LikeCheckResponse,
-    UserLikesResponse,
     LikedProperty,
     LikedPropertiesResponse,
     LikeCountResponse,
