@@ -99,8 +99,6 @@
 }
 
 .property-details {
-    display: flex;
-    justify-content: space-between;
     font-size: var(--fs-sm);
     color: var(--gray);
     padding-top: var(--spacing-sm);

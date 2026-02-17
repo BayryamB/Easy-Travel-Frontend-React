@@ -157,14 +157,12 @@ class LikesService {
             if (!userLikes) {
                 return false;
             }
-            console.log("User likes", userLikes);
 
             const isLiked: boolean = userLikes?.includes(propertyId) ?? false;
 
             if (!response.ok) {
                 return false;
             }
-            console.log("isLiked:", isLiked);
             return isLiked;
         } catch (error) {
             console.error("Error checking like status:", error);

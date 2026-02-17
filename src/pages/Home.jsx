@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { propertyService } from "../services/propertyService";
 import "./Home.css";
-import LikeButton from "../components/LIkebutton";
+import LikeButton from "../components/LikeButton";
 const Home = () => {
     const [shortTermStays, setShortTermStays] = useState([]);
     const [longTermStays, setLongTermStays] = useState([]);

@@ -4,6 +4,7 @@ import "./PropertyDetails.css";
 import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
 import { authService } from "../services/authService";
+import LikeButton from "../components/LIkebutton";
 const PropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -169,7 +170,8 @@ const PropertyDetails = () => {
                     </div>
                 </div>
                 <div className="header-actions">
-                    <button className="btn-icon">❤️ Save</button>
+                    <LikeButton propertyId={property._id} showCount={true} />
+                    <button className="btn-icon">📋 Save</button>
                     <button className="btn-icon">📤 Share</button>
                 </div>
             </div>
