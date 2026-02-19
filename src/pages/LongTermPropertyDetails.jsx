@@ -5,7 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
 import { authService } from "../services/authService";
 import LikeButton from "../components/LIkebutton";
-const PropertyDetails = () => {
+
+const LongTermPropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -21,6 +22,18 @@ const PropertyDetails = () => {
         import.meta.env.VITE_API_URL ||
         "https://easy-travel-backend-nodejs.onrender.com/api";
 
+    // ✅ Helper function to format location
+    const formatLocation = (location) => {
+        if (!location) return "Unknown location";
+        if (typeof location === "string") {
+            return location;
+        }
+        if (typeof location === "object") {
+            return `${location.city}, ${location.country}`;
+        }
+        return "Unknown location";
+    };
+
     useEffect(() => {
         const fetchPropertyDetails = async () => {
             try {
@@ -28,14 +41,8 @@ const PropertyDetails = () => {
 
                 // Fetch property (try normal-stays first, then long-term-stays)
                 let propertyResponse = await fetch(
-                    `${BACKEND_URL}/normal-stays/${id}`,
+                    `${BACKEND_URL}/long-term-stays/${id}`,
                 );
-
-                if (!propertyResponse.ok) {
-                    propertyResponse = await fetch(
-                        `${BACKEND_URL}/long-term-stays/${id}`,
-                    );
-                }
 
                 if (!propertyResponse.ok) {
                     throw new Error("Property not found");
@@ -46,7 +53,7 @@ const PropertyDetails = () => {
                 const propertyOwner =
                     actualProperty.hostId._id === authService.getUserId();
 
-                //console.log("Property Data:", actualProperty); // Debug log
+                // console.log("Property Data:", actualProperty); // Debug log
                 // console.log(authService.getUserId());
                 // console.log("HostId:", actualProperty.hostId._id); // Debug log
                 // console.log(propertyOwner);
@@ -147,6 +154,8 @@ const PropertyDetails = () => {
 
     const descriptionPreview = property.description?.substring(0, 300) || "";
     const fullDescription = property.description || "";
+    const displayLocation = formatLocation(property.location); // ✅ Format location once
+
     return (
         <div className="property-details">
             {/* Breadcrumb */}
@@ -155,7 +164,7 @@ const PropertyDetails = () => {
                 <span>/</span>
                 <button onClick={() => navigate("/")}>Stays</button>
                 <span>/</span>
-                <span>{property.location}</span>
+                <span>{displayLocation}</span>
             </div>
 
             {/* Header */}
@@ -166,7 +175,7 @@ const PropertyDetails = () => {
                         <span className="rating">
                             ⭐ {avgRating} ({reviews.length} reviews)
                         </span>
-                        <span className="location">📍 {property.location}</span>
+                        <span className="location">📍 {displayLocation}</span>
                     </div>
                 </div>
                 <div className="header-actions">
@@ -380,4 +389,4 @@ const PropertyDetails = () => {
     );
 };
 
-export default PropertyDetails;
+export default LongTermPropertyDetails;

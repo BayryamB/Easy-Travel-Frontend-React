@@ -22,6 +22,7 @@ import PropertyDetails from "./pages/PropertyDetails";
 import NotFound from "./pages/NotFound";
 import EditListing from "./pages/EditListing";
 import LikeButton from "./components/LikeButton";
+import LongTermPropertyDetails from "./pages/LongTermPropertyDetails";
 
 import "./App.css";
 
@@ -53,6 +54,14 @@ function App() {
                         <Route
                             path="/property/:id"
                             element={<PropertyDetails />}
+                        />
+                        <Route
+                            path="/long-term-property/:id"
+                            element={<LongTermPropertyDetails />}
+                        />
+                        <Route
+                            path="/property-detail/:id"
+                            element={<PropertyDetail />}
                         />
 
                         {/* Protected Routes */}

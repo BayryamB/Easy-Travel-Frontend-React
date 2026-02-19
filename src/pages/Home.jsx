@@ -255,7 +255,7 @@ const Home = () => {
                             {longTermStays.map((property) => (
                                 <Link
                                     key={property._id}
-                                    to={`/property/${property._id}`}
+                                    to={`/long-term-property/${property._id}`}
                                     className="property-link"
                                 >
                                     <div className="property-card">
