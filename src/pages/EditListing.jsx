@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./BecomeHost.css"; // Reusing BecomeHost CSS
+import { detectPropertyType } from "../utils/helpers";
 
 const EditListing = () => {
     const { id } = useParams();
@@ -55,7 +56,9 @@ const EditListing = () => {
 
                 let response = await fetch(`${BACKEND_URL}/normal-stays/${id}`);
                 let data;
-                let type = "short";
+                let type = detectPropertyType;
+
+                console.log(type);
 
                 if (!response.ok) {
                     response = await fetch(

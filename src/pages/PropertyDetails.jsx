@@ -4,7 +4,7 @@ import "./PropertyDetails.css";
 import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
 import { authService } from "../services/authService";
-import LikeButton from "../components/LIkebutton";
+import LikeButton from "../components/LikeButton";
 const PropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -30,12 +30,6 @@ const PropertyDetails = () => {
                 let propertyResponse = await fetch(
                     `${BACKEND_URL}/normal-stays/${id}`,
                 );
-
-                if (!propertyResponse.ok) {
-                    propertyResponse = await fetch(
-                        `${BACKEND_URL}/long-term-stays/${id}`,
-                    );
-                }
 
                 if (!propertyResponse.ok) {
                     throw new Error("Property not found");

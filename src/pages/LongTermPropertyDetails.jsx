@@ -4,7 +4,7 @@ import "./PropertyDetails.css";
 import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
 import { authService } from "../services/authService";
-import LikeButton from "../components/LIkebutton";
+import LikeButton from "../components/LikeButton";
 
 const LongTermPropertyDetails = () => {
     const { id } = useParams();
@@ -39,7 +39,6 @@ const LongTermPropertyDetails = () => {
             try {
                 setLoading(true);
 
-                // Fetch property (try normal-stays first, then long-term-stays)
                 let propertyResponse = await fetch(
                     `${BACKEND_URL}/long-term-stays/${id}`,
                 );

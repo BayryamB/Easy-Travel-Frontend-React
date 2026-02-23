@@ -267,15 +267,18 @@ const Home = () => {
                                                 }
                                                 alt={property.title}
                                             />
-                                            <button
-                                                className="like-btn"
-                                                type="button"
-                                            >
-                                                ♡
-                                            </button>
+                                            <LikeButton
+                                                propertyId={property._id}
+                                            />
                                             <span className="property-badge">
                                                 Rentals
                                             </span>
+                                            <div className="property-price">
+                                                <strong>
+                                                    ${property.price}
+                                                </strong>
+                                                <span>/month</span>
+                                            </div>
                                         </div>
                                         <div className="property-info">
                                             <div className="property-header">
@@ -301,12 +304,6 @@ const Home = () => {
                                                 )}
                                                 ...
                                             </p>
-                                            <div className="property-price">
-                                                <strong>
-                                                    ${property.price}
-                                                </strong>
-                                                <span>/month</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </Link>

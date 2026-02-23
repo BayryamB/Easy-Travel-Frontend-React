@@ -114,3 +114,9 @@ export const getTimeAgo = (date: string | Date): string => {
         return `${Math.floor(diffInSeconds / 86400)} days ago`;
     return formatDate(past);
 };
+export const detectPropertyType = (): "short" | "long" => {
+    if (typeof window === "undefined") {
+        return "short"; // Default to short-term if window not available (SSR)
+    }
+    return window.location.pathname.includes("long-term") ? "long" : "short";
+};
