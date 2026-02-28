@@ -1,22 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { reviewService } from "../services/reviewService";
 import ReviewCard from "./ReviewCard";
 import "./ReviewList.css";
 
-const ReviewList = ({ propertyId, onReviewDeleted }) => {
+const ReviewList = forwardRef(({ propertyId, onReviewDeleted }, ref) => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [avgRating, setAvgRating] = useState(0);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    // Expose refreshReviews method to parent component
+    useImperativeHandle(ref, () => ({
+        refreshReviews: () => {
+            console.log("Refreshing reviews...");
+            setRefreshTrigger((prev) => prev + 1);
+        },
+    }));
 
     useEffect(() => {
         const fetchReviews = async () => {
             try {
                 setLoading(true);
+                console.log("Fetching reviews for property:", propertyId);
+
                 const fetchedReviews =
                     await reviewService.getPropertyReviews(propertyId);
+
+                console.log("Fetched reviews:", fetchedReviews);
                 setReviews(fetchedReviews);
-                console.log(fetchedReviews);
 
                 if (fetchedReviews.length > 0) {
                     const avg =
@@ -33,7 +45,7 @@ const ReviewList = ({ propertyId, onReviewDeleted }) => {
         };
 
         fetchReviews();
-    }, [propertyId]);
+    }, [propertyId, refreshTrigger]);
 
     const handleMarkHelpful = async (reviewId) => {
         try {
@@ -124,6 +136,8 @@ const ReviewList = ({ propertyId, onReviewDeleted }) => {
             </div>
         </div>
     );
-};
+});
+
+ReviewList.displayName = "ReviewList";
 
 export default ReviewList;

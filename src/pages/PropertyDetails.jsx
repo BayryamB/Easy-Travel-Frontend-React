@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "./PropertyDetails.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,6 +10,7 @@ import ReviewForm from "../components/ReviewForm";
 const PropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const reviewListRef = useRef(null);
 
     const [property, setProperty] = useState(null);
     const [host, setHost] = useState(null);
@@ -143,6 +144,14 @@ const PropertyDetails = () => {
 
     const descriptionPreview = property.description?.substring(0, 300) || "";
     const fullDescription = property.description || "";
+
+    const handleReviewSubmitted = () => {
+        // Call refresh on ReviewList to reload reviews
+        if (reviewListRef.current?.refreshReviews) {
+            console.log("Refreshing reviews after new submission...");
+            reviewListRef.current.refreshReviews();
+        }
+    };
     return (
         <div className="property-details">
             {/* Breadcrumb */}
@@ -378,14 +387,12 @@ const PropertyDetails = () => {
                         propertyType="short-term"
                         hostId={property.hostId}
                         onSubmit={() => {
-                            // Optionally refresh reviews when new one is posted
+                            handleReviewSubmitted();
                         }}
                     />
                     <ReviewList
                         propertyId={property._id}
-                        onReviewDeleted={() => {
-                            // Optionally refresh when review is deleted
-                        }}
+                        onReviewDeleted={handleReviewSubmitted}
                     />
                 </div>
             </div>

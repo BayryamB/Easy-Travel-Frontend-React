@@ -1,3 +1,9 @@
+/**
+ * Review Service - TypeScript Version (ADJUSTED FOR BACKEND)
+ * Manages all review-related API calls
+ */
+
+// Type Definitions
 interface ReviewRatings {
     cleanliness?: number;
     communication?: number;
@@ -32,6 +38,8 @@ interface Review {
 interface CreateReviewPayload {
     propertyId: string;
     propertyType: "long-term" | "short-term";
+    userId: string;
+    hostId: string;
     rating: number;
     title?: string;
     comment?: string;
@@ -42,13 +50,8 @@ interface CreateReviewPayload {
 }
 
 interface ReviewsResponse {
-    data: Review[];
-    total?: number;
-    average?: number;
-}
-
-interface SingleReviewResponse {
-    data: Review;
+    data?: Review[];
+    [key: string]: any;
 }
 
 interface ServiceError {
@@ -63,6 +66,49 @@ const API_URL = import.meta.env.VITE_API_URL as string;
  */
 class ReviewService {
     /**
+     * Get reviews for a specific property
+     * Handles both array and wrapped response formats
+     * @param propertyId - Property ID
+     * @returns Array of reviews for the property
+     */
+    async getPropertyReviews(propertyId: string): Promise<Review[]> {
+        try {
+            console.log(`Fetching reviews for property: ${propertyId}`);
+            const response = await fetch(
+                `${API_URL}/reviews/property/${propertyId}`,
+            );
+
+            if (!response.ok) {
+                console.log("Reviews endpoint returned not ok status");
+                return [];
+            }
+
+            const data = await response.json();
+            console.log("Raw response from backend:", data);
+
+            // Handle different response formats
+            let reviews: Review[] = [];
+
+            if (Array.isArray(data)) {
+                // Format: [review1, review2, ...]
+                reviews = data;
+            } else if (data.data && Array.isArray(data.data)) {
+                // Format: { data: [review1, review2, ...] }
+                reviews = data.data;
+            } else if (data && typeof data === "object" && data._id) {
+                // Single review object returned
+                reviews = [data];
+            }
+
+            console.log("Processed reviews:", reviews);
+            return reviews;
+        } catch (error) {
+            console.error("Error fetching property reviews:", error);
+            return [];
+        }
+    }
+
+    /**
      * Get all reviews
      * @returns Array of all reviews
      */
@@ -71,39 +117,20 @@ class ReviewService {
             const response = await fetch(`${API_URL}/reviews`);
 
             if (!response.ok) {
-                throw {
-                    message: "Failed to fetch reviews",
-                    status: response.status,
-                } as ServiceError;
-            }
-
-            const data = (await response.json()) as ReviewsResponse;
-            return data.data || [];
-        } catch (error) {
-            console.error("Error fetching reviews:", error);
-            return [];
-        }
-    }
-
-    /**
-     * Get reviews for a specific property
-     * @param propertyId - Property ID
-     * @returns Array of reviews for the property
-     */
-    async getPropertyReviews(propertyId: string): Promise<Review[]> {
-        try {
-            const response = await fetch(
-                `${API_URL}/reviews/property/${propertyId}`,
-            );
-
-            if (!response.ok) {
                 return [];
             }
 
-            const data = (await response.json()) as ReviewsResponse;
-            return data.data || [];
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+                return data;
+            } else if (data.data && Array.isArray(data.data)) {
+                return data.data;
+            }
+
+            return [];
         } catch (error) {
-            console.error("Error fetching property reviews:", error);
+            console.error("Error fetching reviews:", error);
             return [];
         }
     }
@@ -121,8 +148,15 @@ class ReviewService {
                 return [];
             }
 
-            const data = (await response.json()) as ReviewsResponse;
-            return data.data || [];
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+                return data;
+            } else if (data.data && Array.isArray(data.data)) {
+                return data.data;
+            }
+
+            return [];
         } catch (error) {
             console.error("Error fetching user reviews:", error);
             return [];
@@ -142,8 +176,8 @@ class ReviewService {
                 return null;
             }
 
-            const data = (await response.json()) as SingleReviewResponse;
-            return data.data || null;
+            const data = await response.json();
+            return data.data || data;
         } catch (error) {
             console.error("Error fetching review:", error);
             return null;
@@ -158,24 +192,60 @@ class ReviewService {
      */
     async createReview(payload: CreateReviewPayload): Promise<Review> {
         try {
+            console.log("Creating review with payload:", payload);
+
+            // Helper function to extract ID from object or string
+            const extractId = (value: any): string => {
+                if (typeof value === "string") {
+                    return value;
+                }
+                if (value && typeof value === "object" && value._id) {
+                    return String(value._id);
+                }
+                return String(value);
+            };
+
+            // Ensure all fields are properly typed
+            const cleanPayload = {
+                ...payload,
+                userId: extractId(payload.userId),
+                hostId: extractId(payload.hostId),
+                propertyId: extractId(payload.propertyId),
+                rating: Number(payload.rating),
+            };
+
+            console.log("Cleaned payload:", cleanPayload);
+
             const response = await fetch(`${API_URL}/reviews`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(cleanPayload),
             });
 
+            console.log("Response status:", response.status);
+
             if (!response.ok) {
-                const error = await response.json();
+                const errorData = await response.json();
+                console.error("Backend error response:", errorData);
                 throw {
-                    message: error.message || "Failed to create review",
+                    message:
+                        errorData.message ||
+                        errorData.error ||
+                        "Failed to create review",
                     status: response.status,
                 } as ServiceError;
             }
 
-            const data = (await response.json()) as SingleReviewResponse;
-            return data.data;
+            const responseData = await response.json();
+            console.log("Review created successfully:", responseData);
+
+            // Properly type the response
+            const review: Review = responseData.data
+                ? responseData.data
+                : responseData;
+            return review;
         } catch (error) {
             console.error("Error creating review:", error);
             throw error;
@@ -210,8 +280,8 @@ class ReviewService {
                 } as ServiceError;
             }
 
-            const data = (await response.json()) as SingleReviewResponse;
-            return data.data;
+            const data = await response.json();
+            return data.data || data;
         } catch (error) {
             console.error("Error updating review:", error);
             throw error;
@@ -266,8 +336,8 @@ class ReviewService {
                 return null;
             }
 
-            const data = (await response.json()) as SingleReviewResponse;
-            return data.data || null;
+            const data = await response.json();
+            return data.data || data;
         } catch (error) {
             console.error("Error marking review as helpful:", error);
             return null;
@@ -319,7 +389,9 @@ class ReviewService {
         };
 
         reviews.forEach((review) => {
-            distribution[review.rating]++;
+            if (review.rating >= 1 && review.rating <= 5) {
+                distribution[review.rating]++;
+            }
         });
 
         return distribution;
@@ -335,7 +407,6 @@ export type {
     ReviewRatings,
     CreateReviewPayload,
     ReviewsResponse,
-    SingleReviewResponse,
     ServiceError,
 };
 
