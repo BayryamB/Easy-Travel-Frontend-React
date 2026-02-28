@@ -5,6 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import BookingModal from "../components/BookingSection/BookingModal";
 import { authService } from "../services/authService";
 import LikeButton from "../components/LikeButton";
+import ReviewList from "../components/ReviewList";
+import ReviewForm from "../components/ReviewForm";
 const PropertyDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -368,6 +370,23 @@ const PropertyDetails = () => {
                             </button>
                         </div>
                     )}
+                </div>
+                {/* Reviews Section */}
+                <div className="reviews-section">
+                    <ReviewForm
+                        propertyId={property._id}
+                        propertyType="short-term"
+                        hostId={property.hostId}
+                        onSubmit={() => {
+                            // Optionally refresh reviews when new one is posted
+                        }}
+                    />
+                    <ReviewList
+                        propertyId={property._id}
+                        onReviewDeleted={() => {
+                            // Optionally refresh when review is deleted
+                        }}
+                    />
                 </div>
             </div>
         </div>
